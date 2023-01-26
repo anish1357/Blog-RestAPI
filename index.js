@@ -7,12 +7,13 @@ app.use(bodyParser.json());
 
 const authRoute = require("./routes/auth")
 const userRoute = require("./routes/users")
-
+const blogRoute = require("./routes/blogs")
 //app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/auth",authRoute);
-app.use("/user",userRoute);
+app.use("/users",userRoute);
+app.use("/blogs",blogRoute);
 
 dotenv.config();
 const mongoose = require("mongoose");
