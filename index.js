@@ -6,13 +6,13 @@ app.use(bodyParser.json());
 
 
 const authRoute = require("./routes/auth")
-
+const userRoute = require("./routes/users")
 
 //app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/auth",authRoute);
-
+app.use("/user",userRoute);
 
 dotenv.config();
 const mongoose = require("mongoose");

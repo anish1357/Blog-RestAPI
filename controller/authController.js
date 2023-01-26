@@ -4,6 +4,8 @@ const User = require("../models/User");
 const passwordValidation = require("../validation/password") 
 const emailValidation = require("../validation/email")
 const usernameValidation = require("../validation/username")
+
+
 exports.register = (req, res) => {
     const {username,email,password} = req.body;
 
@@ -33,3 +35,26 @@ exports.register = (req, res) => {
 .catch(err => res.status(500).send({ error: 'Error saving user to database' }))
 }
 
+exports.login = (req,res) => {
+    const {username,password} = req.body;
+    let loadedUser = null;
+    User.findOne({ username: username }).then(
+        user => {
+            if (!user) {
+                return res.status(401).send({ msg: "User with this username does not exist" });
+            }
+            loadedUser = user;
+            return bcrypt.compare(password, user.password);
+        })
+        .then(isEqual => {
+            if (loadedUser === null)
+                return;
+            if (!isEqual) {
+                return res.status(401).send({ msg: "Wrong Password" });
+            }
+        
+            res.status(200).json("Login Successful");
+        }).catch(err => {
+            res.status(500).json("error occured");
+        });
+}
