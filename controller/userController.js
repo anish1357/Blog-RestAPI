@@ -4,7 +4,7 @@ const passwordValidation = require("../validation/password");
 
 exports.update = (req, res) => {
   const { password } = req.body;
-  if (req.userId == req.params.id) {
+  if (req.userId.toString() == req.params.id) {
     if (!passwordValidation.validator(password)) {
       res
         .status(400)
