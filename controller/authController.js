@@ -34,14 +34,17 @@ exports.register = (req, res) => {
 .then(result => {  
     const token = jwt.sign(
         {
-            userId: result._id.toString(),
+            userId: result._id,
         },
         process.env.JWT_PRIVATE_KEY,
-        { expiresIn: '24h' },(err)=> res.send({error : "Error in jwt token"})
+        { expiresIn: '24h' },  (err,data)=> {
+            if(err)
+            res.send({error : "Error in jwt token"});
+            result.token = data;
+            console.log(result);
+        }
     );
      
-         result.token = token;
-    
     res.status(200).send({ message: 'User saved successfully' })
 })
 .catch(err => res.status(500).send({ error: 'Error saving user to database' }))
@@ -64,17 +67,20 @@ exports.login = (req,res) => {
             if (!isEqual) {
                 return res.status(401).send({ msg: "Wrong Password" });
             }
-            console.log(loadedUser._id.toString());
+            // console.log(loadedUser._id.toString());
             const token = jwt.sign(
                 {
-                    userId: loadedUser._id.toString(),
+                    userId: loadedUser._id.toString()
                 },
                 process.env.JWT_PRIVATE_KEY,
-                { expiresIn: '24h' },(err)=> res.send({error : "Error in jwt token"})
+                { expiresIn: '2h' },
+                (err,data)=> {
+                    if(err)
+                    res.send({error : "Error in jwt token"});
+                    loadedUser.token = data;
+                    console.log(loadedUser.token);
+                }
             );
-             
-              loadedUser.token = token;
-        
             res.status(200).json("Login Successful");
         }).catch(err => {
             res.status(500).json("error occured");

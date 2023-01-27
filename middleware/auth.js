@@ -1,21 +1,21 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 
-const config = process.env;
-
-const verifyToken = (req, res, next) => {
-  const token =
-    req.body.token || req.query.token || req.headers["x-access-token"];
-
-  if (!token) {
-    return res.status(403).send("A token is required for authentication");
-  }
-  try {
-    const decoded = jwt.verify(token, config.TOKEN_KEY);
-    req.user = decoded;
-  } catch (err) {
-    return res.status(401).send("Invalid Token");
-  }
-  return next();
+module.exports = (req, res, next) => {
+    const authHeader = req.get('Authorization');
+    if (!authHeader) {
+        return res.status(401).send('Not Authenticated');//If Header does not exist means Not auhenticated
+    }
+    const token = authHeader.split(' ')[1];
+    let decodedToken;
+    try {
+        decodedToken = jwt.verify(token, process.env.JWT_PRIVATE_KEY);//Getting the decoded data
+    } catch (err) {
+        console.log(err);
+    }
+    if (!decodedToken) {
+        return res.status(401).send('Not Authenticated');
+    }
+    req.userId = decodedToken.userId; //attaching userId with req
+    //req.username = decodedToken.username;//attaching username with req
+    next();
 };
-
-module.exports = verifyToken;

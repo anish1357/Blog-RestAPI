@@ -7,7 +7,8 @@ const passwordValidation = require("../validation/password")
 
 
 exports.create = (req, res) => {
-    const newBlog = new Blog(req.body);
+    const userId = req.userId ?? "randomusedid";
+    const newBlog = new Blog({...req.body, userId});
 
     newBlog.save((err,data) => {
        if(err)

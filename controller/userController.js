@@ -30,11 +30,13 @@ exports.update = (req, res) => {
 }
 
 exports.display = (req,res) => {
-    console.log("hello");
-    User.findById(req.params.id,(err,data)=>{
+ 
+    User.findOne({username : req.params.username},(err,data)=>{
         if(err)
         res.status(500).send({ error: "User doesn't Exist " });
-        const {password, ...info} = data._doc; 
-        res.status(200).json( info.blogs);
+        
+        const {password,username ,...info} = data; 
+        console.log(data.token);
+        res.status(200).json(data);
     })
 }

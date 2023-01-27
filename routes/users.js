@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controller/userController")
+const auth = require("../middleware/auth")
 
-
-router.route("/:id").get(userController.display);
+router.route("/:username").get(auth,userController.display);
 router.route("/:id").put(userController.update);
 
 
