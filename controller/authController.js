@@ -1,4 +1,4 @@
-const express = require("express");
+
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const passwordValidation = require("../validation/password");
@@ -46,7 +46,7 @@ exports.register = (req, res) => {
       return newUser.save();
     })
     .then((result) => {
-      const token = jwt.sign(
+       jwt.sign(
         {
           userId: result._id,
         },
@@ -84,7 +84,7 @@ exports.login = (req, res) => {
       if (!isEqual) {
         return res.status(401).send({ msg: "Wrong Password" });
       }
-      // console.log(loadedUser._id.toString());
+       console.log(loadedUser._id.toString());
       const token = jwt.sign(
         {
           userId: loadedUser._id.toString(),

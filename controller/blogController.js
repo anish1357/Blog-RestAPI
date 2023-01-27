@@ -1,7 +1,7 @@
-const bcrypt = require("bcrypt");
+
 const User = require("../models/User");
 const Blog = require("../models/Blog");
-const passwordValidation = require("../validation/password");
+
 
 exports.create = (req, res) => {
   const userId = req.userId;
@@ -27,14 +27,14 @@ exports.update = (req, res) => {
   const { title, desc } = req.body;
   Blog.findById(req.params.id)
     .then((blog) => {
-      if (req.userId === blog.userId) {
-        Blog.findByIdAndUpdate(blog.id, { title, desc }, (err, blog) => {
-          if (err)
-            res
-              .status(401)
-              .send({ error: "Cannot change to the given Title " });
-          res.status(200).send({ msg: " Blog updated sucessfully " });
-        });
+      if (req.userId === blog.userId.toString()) {
+        Blog.findByIdAndUpdate(blog.id)
+          .then((result) =>
+            res.status(200).send({ msg: " Blog updated sucessfully " })
+          )
+          .catch((err) =>
+            res.status(401).send({ error: "Cannot change to the given Title " })
+          );
       } else
         res
           .status(400)
@@ -44,16 +44,19 @@ exports.update = (req, res) => {
 };
 
 exports.delete = (req, res) => {
-  Blog.findById(req.params.id).then((blog) => {
-    if (req.userId === blog.userId) {
-      Blog.findByIdAndDelete(blog.id, (err) => {
-        if (err) res.status(401).send({ error: "Blog not found" });
-        res.status(200).send({ msg: " Blog Deleted sucessfully " });
-      });
-    } else {
-      res
-        .status(400)
-        .send({ error: "You dont have access to delete this blog" });
-    }
-  });
+  Blog.findById(req.params.id)
+    .then((blog) => {
+      if (req.userId === blog.userId.toString()) {
+        Blog.findByIdAndDelete(blog.id)
+          .then((result) =>
+            res.status(200).send({ msg: " Blog Deleted sucessfully " })
+          )
+          .catch((err) => res.status(401).send({ error: "Blog not found" }));
+      } else {
+        res
+          .status(400)
+          .send({ error: "You dont have access to delete this blog" });
+      }
+    })
+    .catch((err) => res.status(401).send({ error: "Blog not found" }));
 };
