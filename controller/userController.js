@@ -30,7 +30,7 @@ exports.update = (req, res) => {
     });
   } else {
     //! if someone tries to change password of other user
-    res.status(401).json("Login into your account to change password");
+    res.status(401).send({error :"Login into your account to change password"});
   }
 };
 

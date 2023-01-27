@@ -45,9 +45,8 @@ exports.registerUser = (req, res) => {
       });
       return newUser.save();
     })
-    .then((result) => {
-      //* signing jwt token 
-      jwt.sign(
+    .then((result) => { 
+      const token = jwt.sign(
         {
           userId: result._id,
         },
@@ -63,7 +62,6 @@ exports.registerUser = (req, res) => {
       res.status(200).send({ message: "User saved successfully" });
     })
     .catch((err) =>
-     //! if users already exist with same email or username
       res.status(500).send({ error: "Error saving user to database" })
     );
 };
@@ -92,7 +90,7 @@ exports.loginUser = (req, res) => {
         return res.status(401).send({ msg: "Wrong Password" });
       }
 
-      jwt.sign(
+      const token = jwt.sign(
         {
           userId: loadedUser._id.toString(),
         },
