@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    token:{
-      type:String
+    token: {
+      type: String,
     },
     username: {
       type: String,
@@ -21,12 +21,12 @@ const userSchema = new mongoose.Schema(
     },
     blogs: [
       {
-          blog_id: {
-              type: mongoose.Schema.Types.ObjectId,
-              ref: 'Blog'
-          }
-      }
-  ]
+        blog_id: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Blog",
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
