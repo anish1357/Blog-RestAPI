@@ -1,4 +1,3 @@
-
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const passwordValidation = require("../validation/password");
@@ -6,16 +5,14 @@ const emailValidation = require("../validation/email");
 const usernameValidation = require("../validation/username");
 const jwt = require("jsonwebtoken");
 
-exports.register = (req, res) => {
+exports.registerUser = (req, res) => {
   const { username, email, password } = req.body;
 
   if (!usernameValidation.validator(username)) {
-    res
-      .status(400)
-      .send({
-        msg: "Incorrect parameters",
-        username: usernameValidation.errMessage,
-      });
+    res.status(400).send({
+      msg: "Incorrect parameters",
+      username: usernameValidation.errMessage,
+    });
     return;
   }
   if (!emailValidation.validator(email)) {
@@ -26,12 +23,10 @@ exports.register = (req, res) => {
   }
 
   if (!passwordValidation.validator(password)) {
-    res
-      .status(400)
-      .send({
-        msg: "Incorrect parameters",
-        password: passwordValidation.errMessage,
-      });
+    res.status(400).send({
+      msg: "Incorrect parameters",
+      password: passwordValidation.errMessage,
+    });
     return;
   }
 
@@ -46,7 +41,7 @@ exports.register = (req, res) => {
       return newUser.save();
     })
     .then((result) => {
-       jwt.sign(
+      jwt.sign(
         {
           userId: result._id,
         },
@@ -66,7 +61,7 @@ exports.register = (req, res) => {
     );
 };
 
-exports.login = (req, res) => {
+exports.loginUser = (req, res) => {
   const { username, password } = req.body;
   let loadedUser = null;
   User.findOne({ username: username })
@@ -84,7 +79,7 @@ exports.login = (req, res) => {
       if (!isEqual) {
         return res.status(401).send({ msg: "Wrong Password" });
       }
-       console.log(loadedUser._id.toString());
+
       const token = jwt.sign(
         {
           userId: loadedUser._id.toString(),

@@ -1,9 +1,7 @@
-
 const User = require("../models/User");
 const Blog = require("../models/Blog");
 
-
-exports.create = (req, res) => {
+exports.createBlog = (req, res) => {
   const userId = req.userId;
   const newBlog = new Blog({ ...req.body, userId });
   newBlog.save((err, data) => {
@@ -18,12 +16,15 @@ exports.create = (req, res) => {
   });
 };
 
-exports.display = (req, res) => {
-  console.log(req.userId);
-  res.json(req.userId);
+exports.displayBlog = (req, res) => {
+  Blog.findById(req.params.id)
+    .then((blog) => {
+      res.status(200).json(blog);
+    })
+    .catch((err) => res.status(501).send({ error: "Blog not found" }));
 };
 
-exports.update = (req, res) => {
+exports.updateBlog = (req, res) => {
   const { title, desc } = req.body;
   Blog.findById(req.params.id)
     .then((blog) => {
@@ -43,7 +44,7 @@ exports.update = (req, res) => {
     .catch((err) => res.status(501).send({ error: "Blog not found" }));
 };
 
-exports.delete = (req, res) => {
+exports.deleteBlog = (req, res) => {
   Blog.findById(req.params.id)
     .then((blog) => {
       if (req.userId === blog.userId.toString()) {
