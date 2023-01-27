@@ -2,24 +2,29 @@ const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 app.use(bodyParser.json());
 
+
+app.use(bodyParser.urlencoded({ extended: true }));
+dotenv.config();
+
+//* all routes 
 const authRoute = require("./routes/auth");
 const userRoute = require("./routes/users");
 const blogRoute = require("./routes/blogs");
 const defaultRoute = require("./routes/default");
-//app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
-const Blog = require("./models/Blog");
+
 
 app.use("/auth", authRoute);
 app.use("/users", userRoute);
 app.use("/blogs", blogRoute);
 app.use("/", defaultRoute);
-dotenv.config();
-const mongoose = require("mongoose");
+
+
 mongoose.set("strictQuery", true);
+//* MONGODB connection
 mongoose
   .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
