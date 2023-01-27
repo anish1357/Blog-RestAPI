@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const homeController = require("../controller/homeController");
+const defaultController = require("../controller/defaultController");
 
 
-router.route("/").get( homeController.display);
+router.route("/").get( defaultController.display);
 
 
 
