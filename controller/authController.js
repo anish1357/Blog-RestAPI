@@ -5,9 +5,14 @@ const emailValidation = require("../validation/email");
 const usernameValidation = require("../validation/username");
 const jwt = require("jsonwebtoken");
 
+/** 
+* *Function to register a new User
+* *takes username ,email,password for request object ,hashes password and saves the user  
+*/
 exports.registerUser = (req, res) => {
   const { username, email, password } = req.body;
 
+  //! checks for validation for email,password and username 
   if (!usernameValidation.validator(username)) {
     res.status(400).send({
       msg: "Incorrect parameters",
@@ -29,7 +34,7 @@ exports.registerUser = (req, res) => {
     });
     return;
   }
-
+//* hashing the password 
   bcrypt
     .hash(password, 12)
     .then((password) => {
@@ -41,6 +46,7 @@ exports.registerUser = (req, res) => {
       return newUser.save();
     })
     .then((result) => {
+      //* signing jwt token 
       jwt.sign(
         {
           userId: result._id,
@@ -57,10 +63,15 @@ exports.registerUser = (req, res) => {
       res.status(200).send({ message: "User saved successfully" });
     })
     .catch((err) =>
+     //! if users already exist with same email or username
       res.status(500).send({ error: "Error saving user to database" })
     );
 };
 
+/** 
+* *Function to login a User
+* *takes username ,password for request object ,hashes password and compares with the one stored in database
+*/
 exports.loginUser = (req, res) => {
   const { username, password } = req.body;
   let loadedUser = null;
@@ -72,6 +83,7 @@ exports.loginUser = (req, res) => {
           .send({ msg: "User with this username does not exist" });
       }
       loadedUser = user;
+      //* comparing hashes 
       return bcrypt.compare(password, user.password);
     })
     .then((isEqual) => {
@@ -80,7 +92,7 @@ exports.loginUser = (req, res) => {
         return res.status(401).send({ msg: "Wrong Password" });
       }
 
-      const token = jwt.sign(
+      jwt.sign(
         {
           userId: loadedUser._id.toString(),
         },

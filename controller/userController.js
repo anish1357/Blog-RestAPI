@@ -2,9 +2,15 @@ const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const passwordValidation = require("../validation/password");
 
+/** 
+* *Function to update password of a user 
+* *takes password in the request object , hashes it and replaces existing password
+* @param id user id of the user 
+*/
 exports.update = (req, res) => {
   const { password } = req.body;
   if (req.userId.toString() == req.params.id) {
+    //! checks for password validation 
     if (!passwordValidation.validator(password)) {
       res.status(400).send({
         msg: "Incorrect parameters",
@@ -23,10 +29,16 @@ exports.update = (req, res) => {
         );
     });
   } else {
+    //! if someone tries to change password of other user
     res.status(401).json("Login into your account to change password");
   }
 };
 
+/** 
+* *Function to display information  of a user 
+* @param username username of the user 
+* @return information about the mentioned user
+*/
 exports.display = (req, res) => {
   User.findOne({ username: req.params.username })
     .then((data) => {
