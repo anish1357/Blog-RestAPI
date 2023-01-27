@@ -4,7 +4,7 @@ const User = require("../models/User");
 const passwordValidation = require("../validation/password") 
 const emailValidation = require("../validation/email")
 const usernameValidation = require("../validation/username")
-
+const jwt = require("jsonwebtoken");
 
 exports.register = (req, res) => {
     const {username,email,password} = req.body;
@@ -31,7 +31,19 @@ exports.register = (req, res) => {
     })
     return newUser.save();
 })
-.then(result =>res.status(200).send({ message: 'User saved successfully' }))
+.then(result => {  
+    const token = jwt.sign(
+        {
+            userId: result._id.toString(),
+        },
+        process.env.JWT_PRIVATE_KEY,
+        { expiresIn: '24h' },(err)=> res.send({error : "Error in jwt token"})
+    );
+     
+         result.token = token;
+    
+    res.status(200).send({ message: 'User saved successfully' })
+})
 .catch(err => res.status(500).send({ error: 'Error saving user to database' }))
 }
 
@@ -52,6 +64,16 @@ exports.login = (req,res) => {
             if (!isEqual) {
                 return res.status(401).send({ msg: "Wrong Password" });
             }
+            console.log(loadedUser._id.toString());
+            const token = jwt.sign(
+                {
+                    userId: loadedUser._id.toString(),
+                },
+                process.env.JWT_PRIVATE_KEY,
+                { expiresIn: '24h' },(err)=> res.send({error : "Error in jwt token"})
+            );
+             
+              loadedUser.token = token;
         
             res.status(200).json("Login Successful");
         }).catch(err => {
